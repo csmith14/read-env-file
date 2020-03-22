@@ -14,17 +14,56 @@ function mapToObject( map: Map<string, string> ) {
 	}, {} )
 }
 
+function isValueQuoted( value: string ): boolean {
+	return [ '\'', '"', '`' ].some( ( quote ) => {
+		return value.startsWith( quote ) && value.endsWith( quote )
+	} )
+}
+
+function stripSurroundingQuotes( value: string ): string {
+	let result = value
+	if ( isValueQuoted( value ) ) {
+		result = value.slice( 1, value.length - 1 )
+	}
+	return result
+}
+
+function checkInvalidFormat( key: string, value: string, index: number ) {
+	const undef = ( !key || !value )
+	const quoted = isValueQuoted( value )
+
+	const invalidSpace = /\s/.test( key ) || ( !quoted && /\s/.test( value ) )
+	const multiAssign = ( !quoted && value.split( '=' ).length > 1 )
+
+	/* No key, No value, Key OR Value contain a space */
+	if ( undef || invalidSpace || multiAssign ) {
+		let reason
+		if ( undef ) reason = `${key ? 'value' : 'key'} undefined`
+		else if ( invalidSpace ) reason = 'invalid spacing'
+		else if ( multiAssign ) reason = 'multiple assignment operators'
+		throw new Error( `FORMAT:${reason}:${index + 1}` )
+	}
+}
+
 function mapVarsFromLines( lines: string[] ) {
 	const map = new Map()
 	lines
-		.filter( ( v ) => v.trim().length && v[0] !== '#' ) // Remove blank & commented
-		.forEach( ( line, index ) => {
-			const [ key, value ] = line.split( '=' ).map( ( s ) => s.trim() )
-			/* No key, No value, Key OR Value contain a space */
-			if ( !key || !value || [ key, value ].some( ( i ) => /\s/.test( i ) ) ) {
-				throw new Error( `FORMAT:${index + 1}` )
-			}
-			map.set( key, value )
+		.forEach(   ( line, index ) => {
+			line = line.trim()
+			/* Skip empty and commented lines, preserving index for line count */
+			if ( line.length === 0 || line[0] === '#' ) return
+
+			const splitLine = line.split( '=' )
+			const key = ( splitLine[0] || '' ).trim()
+			const value = ( splitLine.slice( 1 ).join( '=' ) || '' ).trim()
+
+			/* Check some error conditions and throw if met */
+			checkInvalidFormat( key, value, index )
+
+			/* If value was quoted, the asigned value should not invlude the quotes */
+			const mapValue =  stripSurroundingQuotes( value )
+
+			map.set( key, mapValue )
 		} )
 	return map
 }
@@ -38,17 +77,21 @@ function mapVarsFromLines( lines: string[] ) {
 export function readSingle( path?: string ): EnvVars {
 	path = path || resolve( process.cwd(), '.env' )
 	const file = isAbsolute( path ) ? path : resolve( process.cwd(), path )
-	const content = readFileSync( file, 'utf8' )
-	const lines = content.split( '\n' )
 	try {
+		const content = readFileSync( file, 'utf8' )
+		const lines = content.split( '\n' )
 		const map = mapVarsFromLines( lines )
 		return mapToObject( map )
 	} catch ( error ) {
 		const message = error.message || ''
-		if ( message.includes( 'FORMAT' ) ) {
-			throw new Error( `Invalid file format: ${path}:${parseInt( message.split( ':' )[1], 10 )}` )
-		}
-		throw error
+		let err
+		if ( message.includes( 'FORMAT:' ) ) {
+			const splitMsg = message.split( ':' ).slice( 1 )
+			const reason = splitMsg[0]
+			const line = parseInt( splitMsg[1], 10 )
+			err = new Error( `Invalid file format (${reason}) at ${path}:${line}` )
+		} else err = error
+		throw err
 	}
 }
 
