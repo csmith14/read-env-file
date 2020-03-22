@@ -19,7 +19,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "mocha \"test/**/*.test.ts\"",
+    "test": "ava",
     "lint": "eslint --fix ./src --ext .ts --config .eslintrc",
     "posttest": "yarn lint",
     "preversion": "yarn test && tsc"
@@ -30,11 +30,12 @@
     "@types/chai": "^4",
     "@types/mocha": "^5",
     "@types/node": "^10",
+    "ava": "^3.5.0",
     "chai": "^4",
     "eslint": "^5.13",
     "fancy-test": "^1.4.7",
     "mocha": "^5",
-    "ts-node": "^8",
+    "ts-node": "^8.8.1",
     "typescript": "^3.3"
   },
   "engines": {
