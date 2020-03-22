@@ -1,6 +1,6 @@
 {
   "name": "read-env-file",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/csmith14/read-env-file",
   "bugs": "https://github.com/csmith14/read-env-file/issues",
   "description": "Utilities for reading environment variable names & values from files in \".env\" format",
@@ -22,8 +22,8 @@
     "test": "ava",
     "lint": "eslint --fix ./src --ext .ts --config .eslintrc",
     "posttest": "yarn lint",
-		"preversion": "yarn test && tsc",
-		"prepublish": "yarn version"
+    "preversion": "yarn test && tsc",
+    "prepublish": "yarn version"
   },
   "dependencies": {},
   "devDependencies": {
