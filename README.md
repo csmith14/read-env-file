@@ -1,6 +1,7 @@
 # read-env-file
 
 [![types](https://img.shields.io/badge/types-included-blue.svg?style=flat-square)]()
+![npm: version](https://flat.badgen.net/npm/v/read-env-file?params)
 
 
 Utilities for reading environment variable names & values from files in ".env" format
