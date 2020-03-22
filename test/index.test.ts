@@ -1,3 +1,4 @@
+/* eslint-disable node/no-missing-import */
 import {resolve, join} from 'path'
 import {expect} from 'chai'
 import {fancy} from 'fancy-test'

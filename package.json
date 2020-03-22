@@ -13,7 +13,8 @@
   ],
   "scripts": {
     "test": "nyc --extension .ts mocha \"test/**/*.test.ts\"",
-    "posttest": "eslint --fix . --ext .ts --config .eslintrc",
+		"lint": "eslint --fix ./src --ext .ts --config .eslintrc",
+		"posttest": "yarn lint",
     "preversion": "yarn test && tsc"
   },
   "dependencies": {
