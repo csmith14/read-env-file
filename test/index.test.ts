@@ -75,6 +75,12 @@ describe( 'read-file', () => {
 		expect( envObject ).to.deep.equal( envFiles.commented.value )
 	} )
 
+	it( 'Reads from "./.env" when no path arg supplied', () => {
+		process.chdir( inputDir )
+		const envObject = readSingle()
+		expect( envObject ).to.deep.equal( envFiles.env1.value )
+	} )
+
 	fancy
 		.do( () => readSingle( envFiles.invalid1.path ) )
 		.catch( envFiles.invalid1.value )
