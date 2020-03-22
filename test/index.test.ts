@@ -64,7 +64,7 @@ const multiple = {
 		KeyC: 'ValueC',
 	}}
 
-describe( 'read-file', () => {
+describe( 'env-file', () => {
 	it( 'Reads key/value pairs', () => {
 		const envObject = readSingle( envFiles.env1.path )
 		expect( envObject ).to.deep.equal( envFiles.env1.value )
