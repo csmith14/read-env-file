@@ -1,33 +1,36 @@
 {
-  "name"      : "env-file",
-  "version"   : "0.0.0",
-  "homepage"  : "https://github.com/csmith14/env-file",
-  "bugs"      : "https://github.com/csmith14/env-file/issues",
+  "name": "env-file",
+  "version": "1.0.0",
+  "homepage": "https://github.com/csmith14/env-file",
+  "bugs": "https://github.com/csmith14/env-file/issues",
   "repository": "csmith14/env-file",
-  "license"   : "MIT",
-  "author"    : "Cam Smith @csmith14",
-  "main"      : "lib/index.js",
-  "types"     : "lib/index.d.ts",
-  "files"     : [],
-  "scripts"   : {
-    "test"    : "nyc --extension .ts mocha \"test/**/*.test.ts\"",
-    "posttest": "eslint . --ext .ts --config .eslintrc"
+  "license": "MIT",
+  "author": "Cam Smith @csmith14",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "nyc --extension .ts mocha \"test/**/*.test.ts\"",
+    "posttest": "eslint --fix . --ext .ts --config .eslintrc",
+    "preversion": "yarn test && tsc"
   },
   "dependencies": {
     "tslib": "^1"
   },
   "devDependencies": {
     "@camsmith145/eslint-config-typescript": "^1.3.2",
-    "@types/chai"                          : "^4",
-    "@types/mocha"                         : "^5",
-    "@types/node"                          : "^10",
-    "chai"                                 : "^4",
-    "eslint"                               : "^5.13",
-    "fancy-test"                           : "^1.4.7",
-    "mocha"                                : "^5",
-    "nyc"                                  : "^14",
-    "ts-node"                              : "^8",
-    "typescript"                           : "^3.3"
+    "@types/chai": "^4",
+    "@types/mocha": "^5",
+    "@types/node": "^10",
+    "chai": "^4",
+    "eslint": "^5.13",
+    "fancy-test": "^1.4.7",
+    "mocha": "^5",
+    "nyc": "^14",
+    "ts-node": "^8",
+    "typescript": "^3.3"
   },
   "engines": {
     "node": ">=12.0.0"
