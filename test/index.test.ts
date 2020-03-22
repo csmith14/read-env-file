@@ -1,3 +1,4 @@
+/* eslint-disable node/no-missing-import */
 import {resolve, join} from 'path'
 import {expect} from 'chai'
 import {fancy} from 'fancy-test'
@@ -72,6 +73,12 @@ describe( 'read-file', () => {
 	it( 'Handles commented & empty lines', () => {
 		const envObject = readSingle( envFiles.commented.path )
 		expect( envObject ).to.deep.equal( envFiles.commented.value )
+	} )
+
+	it( 'Reads from "./.env" when no path arg supplied', () => {
+		process.chdir( inputDir )
+		const envObject = readSingle()
+		expect( envObject ).to.deep.equal( envFiles.env1.value )
 	} )
 
 	fancy

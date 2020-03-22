@@ -31,11 +31,12 @@ function mapVarsFromLines( lines: string[] ) {
 
 /**
  * Given a path to a file in .env format, returns key/value pairs in an object.
- * @param {string} path The file path to read
+ * @param {string?} path The file path to read. If omitted, attempts to read from `./.env`
  * @returns {object} An object of corresponding key/value pairs
- * @throws Error if file is not in valid format
+ * @throws Error if file is not in valid format, or file is not found
  */
-export function readSingle( path: string ): EnvVars {
+export function readSingle( path?: string ): EnvVars {
+	path = path || resolve( process.cwd(), '.env' )
 	const file = isAbsolute( path ) ? path : resolve( process.cwd(), path )
 	const content = readFileSync( file, 'utf8' )
 	const lines = content.split( '\n' )
@@ -57,6 +58,7 @@ export function readSingle( path: string ): EnvVars {
  * the most recent value.
  * @param {string[]} paths An array of file paths to read.
  * @returns {object} An aggregate object of key/value pairs
+ * @throws Error if any file is not in valid format or not found
  */
 export function readMultiple( paths: string[] ): EnvVars {
 	return paths.reduce( ( carrier: any, path ) => {
