@@ -1,7 +1,8 @@
 # read-env-file
 
-![types](https://img.shields.io/badge/types-included-blue.svg?style=flat-square)
+[![CircleCI](https://img.shields.io/circleci/project/csmith14/read-env-file/master.svg?style=flat-square)](https://circleci.com/gh/csmith14/read-env-file/tree/master)
 ![npm: version](https://flat.badgen.net/npm/v/read-env-file)
+![types](https://img.shields.io/badge/types-included-blue.svg?style=flat-square)
 
 Utilities for reading environment variable names & values from files in ".env" format
 
