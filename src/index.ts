@@ -1,8 +1,8 @@
-import {readFileSync} from 'fs'
+import {readFileSync, readFile} from 'fs'
 import {isAbsolute, resolve} from 'path'
 
 interface EnvVars {
-  [key: string]: string;
+  [key: string]: string|undefined;
 }
 
 function mapToObject( map: Map<string, string> ) {
@@ -28,6 +28,11 @@ function stripSurroundingQuotes( value: string ): string {
 	return result
 }
 
+function normalizePath( path?: string ): string {
+	path = path || resolve( process.cwd(), '.env' )
+	return isAbsolute( path ) ? path : resolve( process.cwd(), path )
+}
+
 function checkInvalidFormat( key: string, value: string, index: number ) {
 	const undef = ( !key || !value )
 	const quoted = isValueQuoted( value )
@@ -45,7 +50,7 @@ function checkInvalidFormat( key: string, value: string, index: number ) {
 	}
 }
 
-function mapVarsFromLines( lines: string[] ) {
+function makeVarsMap( lines: string[] ) {
 	const map = new Map()
 	lines
 		.forEach(   ( line, index ) => {
@@ -68,19 +73,10 @@ function mapVarsFromLines( lines: string[] ) {
 	return map
 }
 
-/**
- * Given a path to a file in .env format, returns key/value pairs in an object.
- * @param {string?} path The file path to read. If omitted, attempts to read from `./.env`
- * @returns {object} An object of corresponding key/value pairs
- * @throws Error if file is not in valid format, or file is not found
- */
-export function readSingle( path?: string ): EnvVars {
-	path = path || resolve( process.cwd(), '.env' )
-	const file = isAbsolute( path ) ? path : resolve( process.cwd(), path )
+function processContent( path: string, content: string ) {
 	try {
-		const content = readFileSync( file, 'utf8' )
 		const lines = content.split( '\n' )
-		const map = mapVarsFromLines( lines )
+		const map = makeVarsMap( lines )
 		return mapToObject( map )
 	} catch ( error ) {
 		const message = error.message || ''
@@ -96,16 +92,67 @@ export function readSingle( path?: string ): EnvVars {
 }
 
 /**
+ * Given a path to a file in .env format, returns key/value pairs in an object.
+ * @param {string} [path] The file path to read. If omitted, attempts to read from `./.env`
+ * @returns {Promise<EnvVars>} An object of corresponding key/value pairs
+ * @throws Error if file is not in valid format, or file is not found
+ */
+export async function readSingle( path?: string ): Promise<EnvVars> {
+	const file = normalizePath( path )
+	return new Promise( ( resolve, reject ) => {
+		readFile( file, {encoding: 'utf8'}, ( err, content ) => {
+			if ( err ) reject( err )
+			try {
+				resolve( processContent( file, content ) )
+			} catch ( error ) {
+				reject( error )
+			}
+		} )
+	} )
+}
+
+/**
+ * Given a path to a file in .env format, returns key/value pairs in an object.
+ * @param {string} [path] The file path to read. If omitted, attempts to read from `./.env`
+ * @returns {EnvVars} An object of corresponding key/value pairs
+ * @throws Error if file is not in valid format, or file is not found
+ */
+readSingle.sync = ( path?: string ): EnvVars => {
+	const file = normalizePath( path )
+	const content = readFileSync( file, 'utf8' )
+	return processContent( file, content )
+}
+
+/**
  * @description Given an array of paths, will read each and add the key/value
  * pairs to an object which is returned at the end. Any re-used keys will be overwritten by
  * the most recent value.
  * @param {string[]} paths An array of file paths to read.
- * @returns {object} An aggregate object of key/value pairs
+ * @returns {Promise<EnvVars>} An aggregate object of key/value pairs
  * @throws Error if any file is not in valid format or not found
  */
-export function readMultiple( paths: string[] ): EnvVars {
+export async function readMultiple( paths: string[] ): Promise<EnvVars> {
+	const readPromises = paths.map( ( p ) => readSingle( p ) )
+	const varObjects = await Promise.all( readPromises )
+	return varObjects.reduce( ( carrier: any, varObject ) => {
+		return {
+			...carrier,
+			...varObject,
+		}
+	}, {} )
+}
+
+/**
+ * @description Given an array of paths, will read each and add the key/value
+ * pairs to an object which is returned at the end. Any re-used keys will be overwritten by
+ * the most recent value.
+ * @param {string[]} paths An array of file paths to read.
+ * @returns {EnvVars} An aggregate object of key/value pairs
+ * @throws Error if any file is not in valid format or not found
+ */
+readMultiple.sync = ( paths: string[] ): EnvVars => {
 	return paths.reduce( ( carrier: any, path ) => {
-		const obj = readSingle( path )
+		const obj = readSingle.sync( path )
 		return {
 			...carrier,
 			...obj,

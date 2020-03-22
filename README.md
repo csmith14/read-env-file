@@ -1,6 +1,7 @@
 # read-env-file
 
 [![types](https://img.shields.io/badge/types-included-blue.svg?style=flat-square)]()
+![npm: version](https://flat.badgen.net/npm/v/read-env-file)
 
 
 Utilities for reading environment variable names & values from files in ".env" format
@@ -50,14 +51,20 @@ key3=baz
 // path/to/dir/index.js
 const { readSingle, readMultiple } = require('read-env-file');
 
+readSingle(); // Attempts to read from ./.env
+
 readSingle('path/to/.env');
-// {key1: 'foo', key2: 'bar'}
+// Promise<{key1: 'foo', key2: 'bar'}>
+
+readSingle.sync('path/to/.env');
+// Promise{key1: 'foo', key2: 'bar'}
 
 readMultiple(['path/to/.env', 'path/.env']);
+// Promise<{key1: 'foobar', key2: 'bar', key3: 'baz'}>
+
+readMultiple.sync(['path/to/.env', 'path/.env']);
 // {key1: 'foobar', key2: 'bar', key3: 'baz'}
 
-readSingle();
-// Attempts to read from ./.env
 ```
 
 ## File Formatting
@@ -67,6 +74,8 @@ readSingle();
 - comments and blank lines are ignored
 - values quoted (with `'`,  `"`, or backtick) to include spaces and `=` character
 - spaces around keys and values are ignored
+
+Examples:
 
 ```text
 key=value
@@ -103,6 +112,8 @@ The following conditions cause an invalid format error:
 | space in key                  | `invalid spacing`               |
 | space in unquoted value       | `invalid spacing`               |
 | multiple assignment operators | `multiple assignment operators` |
+
+Examples:
 
 ```text
 # missing key
