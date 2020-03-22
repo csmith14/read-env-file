@@ -51,14 +51,20 @@ key3=baz
 // path/to/dir/index.js
 const { readSingle, readMultiple } = require('read-env-file');
 
+readSingle(); // Attempts to read from ./.env
+
 readSingle('path/to/.env');
-// {key1: 'foo', key2: 'bar'}
+// Promise<{key1: 'foo', key2: 'bar'}>
+
+readSingle.sync('path/to/.env');
+// Promise{key1: 'foo', key2: 'bar'}
 
 readMultiple(['path/to/.env', 'path/.env']);
+// Promise<{key1: 'foobar', key2: 'bar', key3: 'baz'}>
+
+readMultiple.sync(['path/to/.env', 'path/.env']);
 // {key1: 'foobar', key2: 'bar', key3: 'baz'}
 
-readSingle();
-// Attempts to read from ./.env
 ```
 
 ## File Formatting

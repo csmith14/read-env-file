@@ -83,33 +83,33 @@ test.before( ( t ) => {
 	}
 } )
 
-test.serial( 'Reads key/value pairs', ( t ) => {
-	const envObject = readSingle( t.context.envFiles.env1.path )
+test.serial( 'Reads key/value pairs', async ( t ) => {
+	const envObject = await readSingle( t.context.envFiles.env1.path )
 	t.deepEqual( envObject, t.context.envFiles.env1.value )
 } )
 
-test.serial( 'Handles commented & empty lines', ( t ) => {
-	const envObject = readSingle( t.context.envFiles.commented.path )
+test.serial( 'Handles commented & empty lines', async ( t ) => {
+	const envObject = await readSingle( t.context.envFiles.commented.path )
 	t.deepEqual( envObject, t.context.envFiles.commented.value )
 } )
 
-test.serial( 'Allows spaces in quoted values', ( t ) => {
-	const envObject = readSingle( t.context.envFiles.quoteSpaced.path )
+test.serial( 'Allows spaces in quoted values', async ( t ) => {
+	const envObject = await readSingle( t.context.envFiles.quoteSpaced.path )
 	t.deepEqual( envObject, t.context.envFiles.quoteSpaced.value )
 } )
 
-test.serial( 'Reads from "./.env" when no path arg supplied', ( t ) => {
+test.serial( 'Reads from "./.env" when no path arg supplied', async ( t ) => {
 	process.chdir( inputDir )
-	const envObject = readSingle()
+	const envObject = await readSingle()
 	t.deepEqual( envObject, t.context.envFiles.env1.value )
 } )
 
-test.serial( 'Allows assignment operators in quoted values', ( t ) => {
-	const envObject = readSingle( t.context.envFiles.quotedAssign.path )
+test.serial( 'Allows assignment operators in quoted values', async ( t ) => {
+	const envObject = await readSingle( t.context.envFiles.quotedAssign.path )
 	t.deepEqual( envObject, t.context.envFiles.quotedAssign.value )
 } )
 
-test.serial( 'Merges the results of multiple input files', ( t ) => {
+test.serial( 'Merges the results of multiple input files', async ( t ) => {
 	/* read-all paths and t.deepEqualed value */
 	const multiple = {
 		paths: [
@@ -128,41 +128,41 @@ test.serial( 'Merges the results of multiple input files', ( t ) => {
 			KeyC: 'ValueC',
 		},
 	}
-	const merged = readMultiple( multiple.paths )
+	const merged = await readMultiple( multiple.paths )
 	t.deepEqual( merged, multiple.value )
 } )
 
-test.serial( 'Invalid Format (missing key)', ( t ) => {
-	const err = t.throws( () => readSingle( t.context.envFiles.noKey.path ) )
+test.serial( 'Invalid Format (missing key)',  async ( t ) => {
+	const err = await t.throwsAsync( () =>  readSingle( t.context.envFiles.noKey.path ) )
 	t.regex( err.message, t.context.envFiles.noKey.value )
 } )
 
-test.serial( 'Invalid Format (missing value)', ( t ) => {
-	const err = t.throws( () => readSingle( t.context.envFiles.noValue.path ) )
+test.serial( 'Invalid Format (missing value)',  async ( t ) => {
+	const err = await t.throwsAsync( () =>  readSingle( t.context.envFiles.noValue.path ) )
 	t.regex( err.message, t.context.envFiles.noValue.value )
 } )
 
-test.serial( 'Invalid Format (missing assignment)', ( t ) => {
-	const err = t.throws( () => readSingle( t.context.envFiles.noAssign.path ) )
+test.serial( 'Invalid Format (missing assignment)',  async ( t ) => {
+	const err = await t.throwsAsync( () =>  readSingle( t.context.envFiles.noAssign.path ) )
 	t.regex( err.message, t.context.envFiles.noAssign.value )
 } )
 
-test.serial( 'Invalid Format (space in key)', ( t ) => {
-	const err = t.throws( () => readSingle( t.context.envFiles.keySpaced.path ) )
+test.serial( 'Invalid Format (space in key)',  async ( t ) => {
+	const err = await t.throwsAsync( () =>  readSingle( t.context.envFiles.keySpaced.path ) )
 	t.regex( err.message, t.context.envFiles.keySpaced.value )
 } )
 
-test.serial( 'Invalid Format (space in unquoted value)', ( t ) => {
-	const err = t.throws( () => readSingle( t.context.envFiles.unquotedSpaced.path ) )
+test.serial( 'Invalid Format (space in unquoted value)',  async ( t ) => {
+	const err = await t.throwsAsync( () =>  readSingle( t.context.envFiles.unquotedSpaced.path ) )
 	t.regex( err.message, t.context.envFiles.unquotedSpaced.value )
 } )
 
-test.serial( 'Invalid Format (multiple assignment operators)', ( t ) => {
-	const err = t.throws( () => readSingle( t.context.envFiles.multiAssign.path ) )
+test.serial( 'Invalid Format (multiple assignment operators)',  async ( t ) => {
+	const err = await t.throwsAsync( () =>  readSingle( t.context.envFiles.multiAssign.path ) )
 	t.regex( err.message, t.context.envFiles.multiAssign.value )
 } )
 
-test.serial( 'Invalid Format Error contains accurate line number', ( t ) => {
-	const err = t.throws( () => readSingle( t.context.envFiles.invalidLineNumber.path ) )
+test.serial( 'Invalid Format Error contains accurate line number',  async ( t ) => {
+	const err = await t.throwsAsync( () =>  readSingle( t.context.envFiles.invalidLineNumber.path ) )
 	t.regex( err.message, t.context.envFiles.invalidLineNumber.value )
 } )
