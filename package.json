@@ -1,8 +1,8 @@
 {
-  "name": "env-file",
+  "name": "read-env-file",
   "version": "1.0.0",
-  "homepage": "https://github.com/csmith14/env-file",
-  "bugs": "https://github.com/csmith14/env-file/issues",
+  "homepage": "https://github.com/csmith14/read-env-file",
+  "bugs": "https://github.com/csmith14/read-env-file/issues",
   "description": "Utilities for reading environment variable names & values from files in \".env\" format",
   "keywords": [
     "env",
@@ -10,7 +10,7 @@
     ".env",
     "env-var"
   ],
-  "repository": "csmith14/env-file",
+  "repository": "csmith14/read-env-file",
   "license": "MIT",
   "author": "Cam Smith @csmith14",
   "main": "lib/index.js",
@@ -22,7 +22,8 @@
     "test": "ava",
     "lint": "eslint --fix ./src --ext .ts --config .eslintrc",
     "posttest": "yarn lint",
-    "preversion": "yarn test && tsc"
+		"preversion": "yarn test && tsc",
+		"prepublish": "yarn version"
   },
   "dependencies": {},
   "devDependencies": {

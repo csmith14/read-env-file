@@ -1,4 +1,4 @@
-# env-file
+# read-env-file
 
 [![types](https://img.shields.io/badge/types-included-blue.svg?style=flat-square)]()
 
@@ -25,9 +25,9 @@ Utilities for reading environment variable names & values from files in ".env" f
 ## Installation
 
 ```sh
-yarn add env-file
+yarn add read-env-file
 # or
-npm i env-file
+npm i read-env-file
 ```
 
 ## Usage
@@ -48,7 +48,7 @@ key3=baz
 
 ```javascript
 // path/to/dir/index.js
-const { readSingle, readMultiple } = require('env-file');
+const { readSingle, readMultiple } = require('read-env-file');
 
 readSingle('path/to/.env');
 // {key1: 'foo', key2: 'bar'}
