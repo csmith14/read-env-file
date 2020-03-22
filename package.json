@@ -1,6 +1,6 @@
 {
   "name": "read-env-file",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "homepage": "https://github.com/csmith14/read-env-file",
   "bugs": "https://github.com/csmith14/read-env-file/issues",
   "description": "Utilities for reading environment variable names & values from files in \".env\" format",
