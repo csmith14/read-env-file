@@ -1,8 +1,7 @@
 # read-env-file
 
-[![types](https://img.shields.io/badge/types-included-blue.svg?style=flat-square)]()
+![types](https://img.shields.io/badge/types-included-blue.svg?style=flat-square)
 ![npm: version](https://flat.badgen.net/npm/v/read-env-file)
-
 
 Utilities for reading environment variable names & values from files in ".env" format
 
@@ -57,7 +56,7 @@ readSingle('path/to/.env');
 // Promise<{key1: 'foo', key2: 'bar'}>
 
 readSingle.sync('path/to/.env');
-// Promise{key1: 'foo', key2: 'bar'}
+// {key1: 'foo', key2: 'bar'}
 
 readMultiple(['path/to/.env', 'path/.env']);
 // Promise<{key1: 'foobar', key2: 'bar', key3: 'baz'}>

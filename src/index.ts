@@ -85,7 +85,7 @@ function processContent( path: string, content: string ) {
 			const splitMsg = message.split( ':' ).slice( 1 )
 			const reason = splitMsg[0]
 			const line = parseInt( splitMsg[1], 10 )
-			err = new Error( `Invalid file format (${reason}) at ${path}:${line}` )
+			err = `Invalid file format (${reason}) at ${path}:${line}`
 		} else err = error
 		throw err
 	}
