@@ -1,0 +1,57 @@
+version: 2.1
+
+defaults: &defaults
+  working_directory: ~/read-env-file
+  docker:
+    - image: circleci/node:12
+
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Install yarn, install & cache dependncies
+          command: 'curl -o- -L https://yarnpkg.com/install.sh | bash'
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run: yarn install
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Write .env test-file
+          command: echo Key1=Value1 > test/input/.env
+      - run:
+          name: Test
+          command: yarn test
+      - persist_to_workspace:
+          root: ~/read-env-file
+          paths:
+            - .
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/read-env-file
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/read-env-file/.npmrc
+      - run: yarn publish --version $(git tag --list | tail -n 1)
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: master

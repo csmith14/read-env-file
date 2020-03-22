@@ -11,6 +11,11 @@ const inputDir = resolve( __dirname, 'input' )
 /* test input files and expected values/error-regex */
 test.before( ( t ) => {
 	t.context.envFiles = {
+		env: {
+			value: {
+				Key1: 'Value1',
+			},
+		},
 		env1: {
 			path:  join( inputDir, '.env1' ),
 			value: {
@@ -88,6 +93,12 @@ test.serial( 'Reads key/value pairs', async ( t ) => {
 	t.deepEqual( envObject, t.context.envFiles.env1.value )
 } )
 
+test.serial( 'Reads from "./.env" when no path arg supplied', async ( t ) => {
+	process.chdir( inputDir )
+	const envObject = await readSingle()
+	t.deepEqual( envObject, t.context.envFiles.env.value )
+} )
+
 test.serial( 'Handles commented & empty lines', async ( t ) => {
 	const envObject = await readSingle( t.context.envFiles.commented.path )
 	t.deepEqual( envObject, t.context.envFiles.commented.value )
@@ -96,12 +107,6 @@ test.serial( 'Handles commented & empty lines', async ( t ) => {
 test.serial( 'Allows spaces in quoted values', async ( t ) => {
 	const envObject = await readSingle( t.context.envFiles.quoteSpaced.path )
 	t.deepEqual( envObject, t.context.envFiles.quoteSpaced.value )
-} )
-
-test.serial( 'Reads from "./.env" when no path arg supplied', async ( t ) => {
-	process.chdir( inputDir )
-	const envObject = await readSingle()
-	t.deepEqual( envObject, t.context.envFiles.env1.value )
 } )
 
 test.serial( 'Allows assignment operators in quoted values', async ( t ) => {
