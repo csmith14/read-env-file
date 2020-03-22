@@ -6,16 +6,20 @@
 Utilities for reading environment variable names & values from files in ".env" format
 
 ```text
-  env-file
-    ✓ Reads key/value pairs
-    ✓ Handles commented & empty lines
-    ✓ Reads from "./.env" when no path arg supplied
-    ✓ Throws on invalid format (missing key or value)
-    ✓ Throws on invalid format (space in key or value)
-    ✓ Merges the results of multiple input files
+  ✔ Reads key/value pairs
+  ✔ Handles commented & empty lines
+  ✔ Allows spaces in quoted values
+  ✔ Allows assignment operators in quoted values
+  ✔ Reads from "./.env" when no path arg supplied
+  ✔ Merges the results of multiple input files
 
-
-  6 passing (9ms)
+  ✔ Invalid Format (missing key)
+  ✔ Invalid Format (missing value)
+  ✔ Invalid Format (missing assignment)
+  ✔ Invalid Format (space in key)
+  ✔ Invalid Format (space in unquoted value)
+  ✔ Invalid Format (multiple assignment operators)
+  ✔ Invalid Format Error contains accurate line number
 ```
 
 ## Installation
@@ -52,45 +56,77 @@ readSingle('path/to/.env');
 readMultiple(['path/to/.env', 'path/.env']);
 // {key1: 'foobar', key2: 'bar', key3: 'baz'}
 
-readSingle(); // Attempts to read from [cwd]/.env
+readSingle();
+// Attempts to read from ./.env
 ```
 
-### File Formatting
+## File Formatting
 
-#### Valid
+### Valid
+
+- comments and blank lines are ignored
+- values quoted (with `'`,  `"`, or backtick) to include spaces and `=` character
+- spaces around keys and values are ignored
 
 ```text
- key= value
+key=value
+# comment starts with "#" (ignored)
 
-# comment starts with "#"
-
+# whitespace is trimmed from keys and values
 key = value
 key =value
+key= value
 
-# blank lines ignored
-# whitespace trimmed from keys and values
+# whitespace in quoted values preserved
+key="value with spaces'
 
-key =    value
+# Assignment operators in quoted values preserved
+key="value=abc"
+
 ```
 
-#### Invalid (throws Error)
+### Invalid (throws Error)
+
+Errors are informative and specify the cause, file, and line number:
+
+```sh
+Invalid file format (multiple assignment operators) at /some/path/.env:12
+```
+
+The following conditions cause an invalid format error:
+
+| Cause                         | Error Mssage                    |
+| ----------------------------- | ------------------------------- |
+| missing key                   | `key undefined`                 |
+| missing value                 | `value undefined`               |
+| missing assignment            | `value undefined`               |
+| space in key                  | `invalid spacing`               |
+| space in unquoted value       | `invalid spacing`               |
+| multiple assignment operators | `multiple assignment operators` |
 
 ```text
-# Spaces WITHIN keys or (unquoted) values
-key = spaced value
-
-# Absent key, value, or assignment operator
-key=
+# missing key
 =value
-key value
 
+# missing value
+key=
+
+# missing assignment
+keyvalue
+
+# space in key
+k e y = value
+
+# space in unquoted value
+key=value and words
+
+# multiple assignment operators
+key=value=invalid
 ```
 
 ## Dependencies
 
-```text
- - None
-```
+None
 
 ## License
 
