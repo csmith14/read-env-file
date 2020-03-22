@@ -22,8 +22,7 @@
     "test": "ava",
     "lint": "eslint --fix ./src --ext .ts --config .eslintrc",
     "posttest": "yarn lint",
-    "preversion": "yarn test && tsc",
-    "prepublish": "yarn version"
+    "prepublish": "yarn test && tsc"
   },
   "dependencies": {},
   "devDependencies": {
