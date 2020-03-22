@@ -68,6 +68,8 @@ readSingle();
 - values quoted (with `'`,  `"`, or backtick) to include spaces and `=` character
 - spaces around keys and values are ignored
 
+Examples:
+
 ```text
 key=value
 # comment starts with "#" (ignored)
@@ -103,6 +105,8 @@ The following conditions cause an invalid format error:
 | space in key                  | `invalid spacing`               |
 | space in unquoted value       | `invalid spacing`               |
 | multiple assignment operators | `multiple assignment operators` |
+
+Examples:
 
 ```text
 # missing key
